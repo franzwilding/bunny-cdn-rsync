@@ -10,7 +10,8 @@
     "require": {
         "symfony/console": "^6.0",
         "platformcommunity/flysystem-bunnycdn": "^3.1",
-        "thadbryson/flysystem-sync": "dev-master#4af67339f505ad30dc5b2736f056416dd880cd89"
+        "thadbryson/flysystem-sync": "dev-master"
     },
+    "minimum-stability": "dev",
     "bin": ["bunny-cdn-rsync"]
 }
