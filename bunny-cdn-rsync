@@ -1,0 +1,84 @@
+#!/usr/bin/env php
+
+<?php
+require __DIR__.'/vendor/autoload.php';
+
+const BUNNY_API = 'https://api.bunny.net';
+
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNAdapter;
+use PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNClient;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\SingleCommandApplication;
+use TCB\FlysystemSync\Sync;
+use GuzzleHttp\Client as Guzzle;
+
+(new SingleCommandApplication())
+    ->setName('Bunny CDN rsync')
+    ->addArgument('dir', InputArgument::REQUIRED, 'Directory to sync')
+    ->addArgument('storage-zone', InputArgument::REQUIRED, 'Id of storage-zone')
+    ->addOption('api-key', null, InputOption::VALUE_REQUIRED, 'Bunny API Key')
+    ->setCode(function (InputInterface $input, OutputInterface $output) {
+
+        // First of all get storage-zone
+        $client = new Guzzle();
+        $response = json_decode($client->request('GET',
+            sprintf('%s/storagezone/%d', BUNNY_API, $input->getArgument('storage-zone')),
+            array_merge_recursive([
+                'headers' => [
+                    'Accept' => '*/*',
+                    'AccessKey' => $input->getOption('api-key'),
+                ],
+            ]),
+        )->getBody()->getContents());
+
+        $storageZoneName = $response->Name;
+        $storageZonePassword = $response->Password;
+        $storageZoneRegion = $response->Region;
+        $pullZones = $response->PullZones;
+
+        $bunnyClient = new BunnyCDNClient(
+            $storageZoneName,
+            $storageZonePassword,
+            $storageZoneRegion,
+        );
+
+        $adapter = new BunnyCDNAdapter($bunnyClient);
+
+        $bunnyFileSystem = new Filesystem($adapter);
+        $localFileSystem = new Filesystem(new LocalFilesystemAdapter($input->getArgument('dir')));
+
+        $output->writeln(sprintf(
+            'Going to sync directory <info>%s</info> with bunny storage-zone <info>%s</info>...',
+            $input->getArgument('dir'),
+            $storageZoneName,
+        ));
+        $sync = new Sync(
+            $localFileSystem,
+            $bunnyFileSystem
+        );
+        $sync->sync();
+        $output->writeln(['', '<info>Sync complete!</info>', '']);
+
+        foreach($pullZones as $pullZone) {
+
+            $output->writeln(sprintf('Going to purge cache in <info>%s</info>...', $pullZone->Name));
+            $client->request('POST',
+                sprintf('%s/pullzone/%d/purgeCache', BUNNY_API, $pullZone->Id),
+                array_merge_recursive([
+                    'headers' => [
+                        'Accept' => '*/*',
+                        'AccessKey' => $input->getOption('api-key'),
+                    ],
+                ]),
+            );
+            $output->writeln(['', '<info>Cache purge complete!</info>', '']);
+        }
+
+        $output->writeln(['', '', '<info>SYNC COMPLETE!</info>','', '']);
+    })
+    ->run();

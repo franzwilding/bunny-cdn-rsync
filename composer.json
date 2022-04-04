@@ -1,0 +1,15 @@
+{
+    "name": "franzwilding/bunny-rsync",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/franzwilding/flysystem-sync"
+        }
+    ],
+    "require": {
+        "symfony/console": "^6.0",
+        "platformcommunity/flysystem-bunnycdn": "^3.1",
+        "thadbryson/flysystem-sync": "dev-master"
+    },
+    "bin": ["bunny-cdn-rsync"]
+}
