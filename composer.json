@@ -1,5 +1,6 @@
 {
     "name": "franzwilding/bunny-rsync",
+    "license": "MIT",
     "repositories": [
         {
             "type": "vcs",
