@@ -6,7 +6,7 @@ Based on https://flysystem.thephpleague.com/, https://github.com/thadbryson/flys
 
 ## Installation
 ```bash
-composer global require require franzwilding/bunny-cdn-rsync 
+composer global require franzwilding/bunny-cdn-rsync 
 ```
 
 ## Usage
