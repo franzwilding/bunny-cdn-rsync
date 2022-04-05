@@ -1,17 +1,10 @@
 {
     "name": "franzwilding/bunny-rsync",
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/franzwilding/flysystem-sync"
-        }
-    ],
     "require": {
         "symfony/console": "^6.0",
         "platformcommunity/flysystem-bunnycdn": "^3.1",
         "thadbryson/flysystem-sync": "dev-master"
     },
-    "minimum-stability": "dev",
     "bin": ["bunny-cdn-rsync"]
 }
