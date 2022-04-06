@@ -1,7 +1,13 @@
 #!/usr/bin/env php
 
 <?php
-include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
+$root = dirname(__DIR__);
+
+if (! is_file(sprintf('%s/vendor/autoload.php', $root))) {
+    $root = dirname(__DIR__, 4);
+}
+
+require sprintf('%s/vendor/autoload.php', $root);
 
 const BUNNY_API = 'https://api.bunny.net';
 
