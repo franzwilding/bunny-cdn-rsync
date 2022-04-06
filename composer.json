@@ -1,6 +1,8 @@
 {
     "name": "franzwilding/bunny-rsync",
+    "description": "Sync a local directory with bunny edge storage zone and purge cache",
     "license": "MIT",
+    "type": "library",
     "require": {
         "symfony/console": "^6.0",
         "platformcommunity/flysystem-bunnycdn": "^3.1",
