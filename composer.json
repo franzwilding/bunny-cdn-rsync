@@ -8,5 +8,5 @@
         "platformcommunity/flysystem-bunnycdn": "^3.1",
         "thadbryson/flysystem-sync": "dev-master"
     },
-    "bin": ["bunny-cdn-rsync"]
+    "bin": ["bin/bunny-cdn-rsync"]
 }
